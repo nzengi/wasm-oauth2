@@ -1,1 +1,1 @@
-<<hello wasm-oauth2>>
+<*hello wasm-oauth2*>
