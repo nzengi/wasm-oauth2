@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wasm OAuth2 Client</title>
+</head>
+<body>
+    <h1>Wasm OAuth2 Client</h1>
+    <button id="auth">Authorize</button>
+    <button id="token">Exchange Code</button>
+
+    <script type="module">
+        import init, { OAuth2Client } from './pkg/wasm_oauth2.js';
+
+        async function run() {
+            await init();
+
+            const client = new OAuth2Client(
+                'YOUR_CLIENT_ID',
+                'YOUR_CLIENT_SECRET',
+                'https://example.com/authorize',
+                'https://example.com/token',
+                'https://example.com/redirect'
+            );
+
+            document.getElementById('auth').addEventListener('click', () => {
+                const authUrl = client.authorize();
+                window.location.href = authUrl;
+            });
+
+            document.getElementById('token').addEventListener('click', async () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const code = urlParams.get('code');
+                if (code) {
+                    try {
+                        const token = await client.exchange_code(code);
+                        console.log("Access Token:", token);
+                    } catch (err) {
+                        console.error("Error:", err);
+                    }
+                }
+            });
+        }
+
+        run();
+    </script>
+</body>
+</html>
